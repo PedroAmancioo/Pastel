@@ -4,132 +4,1045 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥟 Pastel de Gala - Pastelaria Interativa</title>
 
-    <title>Pastel de Gala</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --primary: #ff5e00;
+            --primary-hover: #e05200;
+            --secondary: #ff2d55;
+            --gold: #ffb703;
+            --amber: #fb8500;
+            --dark: #1f140e;
+            --dark-surface: #2b1d16;
+            --card-bg: rgba(255, 255, 255, 0.94);
+            --card-border: rgba(255, 255, 255, 0.8);
+            --text-main: #2b1e16;
+            --text-muted: #7c685b;
+            --success: #10b981;
+            --glow: rgba(255, 94, 0, 0.35);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px 16px;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-main);
+            position: relative;
+            overflow-x: hidden;
+            background:
+                radial-gradient(circle at 10% 20%, rgba(255, 94, 0, 0.75), transparent 45%),
+                radial-gradient(circle at 90% 80%, rgba(255, 45, 85, 0.75), transparent 45%),
+                linear-gradient(135deg, #2b1406 0%, #150904 100%);
+            background-attachment: fixed;
+        }
 
-    font-family: Arial, Helvetica, sans-serif;
+        /* Animated floating bubbles / oil drops background */
+        .bubbles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
 
-    background:
-        linear-gradient(
-            rgba(255, 94, 0, 0.65),
-            rgba(255, 45, 85, 0.65)
-        ),
-        url("https://commons.wikimedia.org/wiki/Special:Redirect/file/Brazilian_pastel.jpg");
+        .bubble {
+            position: absolute;
+            bottom: -50px;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 220, 100, 0.8), rgba(255, 140, 0, 0.3));
+            border-radius: 50%;
+            box-shadow: 0 0 12px rgba(255, 180, 0, 0.4);
+            animation: floatUp linear infinite;
+        }
 
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0.6) rotate(0deg);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.6;
+            }
+            85% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-110vh) scale(1.2) rotate(360deg);
+                opacity: 0;
+            }
+        }
 
+        /* App Wrapper */
+        .app-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 560px;
+        }
 
+        /* Top Bar Info */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 0 8px;
+        }
+
+        .badge-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 6px 14px;
+            border-radius: 30px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .badge-brand .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulseDot 1.5s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.6; }
+        }
+
+        .sound-toggle {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.25s ease;
+        }
+
+        .sound-toggle:hover {
+            background: rgba(255, 255, 255, 0.28);
+            transform: scale(1.05);
+        }
+
+        /* Glassmorphism Main Card */
         .container {
-            width: 90%;
-            max-width: 500px;
-            padding: 45px;
-
+            width: 100%;
+            padding: 36px 32px;
             text-align: center;
-
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
-
+            background: var(--card-bg);
+            border-radius: 28px;
+            border: 2px solid var(--card-border);
             box-shadow:
-                0 20px 50px rgba(0, 0, 0, 0.3);
-
-            animation: aparecer 0.6s ease;
+                0 25px 60px -10px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        h1 {
-            margin-bottom: 30px;
-
-            color: #ff5e00;
-            font-size: 42px;
-
-            text-shadow: 2px 2px 0 #ffd166;
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(255, 183, 3, 0.25), transparent 70%);
+            pointer-events: none;
+            border-radius: 50%;
         }
 
-        h1 span {
-            color: #ff2d55;
+        /* Header / Titles */
+        .title-wrapper {
+            margin-bottom: 24px;
         }
 
-        form {
+        .main-title {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 38px;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.15;
+            text-shadow: 2px 2px 0px rgba(255, 183, 3, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .main-title .highlight {
+            color: var(--secondary);
+            background: linear-gradient(45deg, #ff2d55, #ff5e00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        /* Form Controls */
+        .form-section {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
+            text-align: left;
         }
 
-        input {
-            padding: 15px 18px;
+        .input-group {
+            position: relative;
+        }
 
-            border: 2px solid #ddd;
-            border-radius: 12px;
+        .input-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-            font-size: 18px;
+        .input-box-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-box-wrapper .input-icon {
+            position: absolute;
+            left: 16px;
+            font-size: 20px;
+            pointer-events: none;
+            transition: transform 0.2s ease;
+        }
+
+        .styled-input {
+            width: 100%;
+            padding: 16px 48px 16px 48px;
+            border: 2.5px solid #e7ded8;
+            border-radius: 16px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--dark);
+            background: #fff;
             outline: none;
-
-            transition: 0.3s;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        input:focus {
-            border-color: #ff5e00;
-
-            box-shadow:
-                0 0 0 4px rgba(255, 94, 0, 0.15);
+        .styled-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 5px rgba(255, 94, 0, 0.18);
+            background: #fffdfb;
         }
 
-        button {
-            padding: 15px;
+        .styled-input:focus ~ .input-icon {
+            transform: scale(1.2) rotate(10deg);
+        }
 
+        .clear-btn {
+            position: absolute;
+            right: 14px;
+            background: #ede6e1;
             border: none;
-            border-radius: 12px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+        }
 
+        .clear-btn:hover {
+            background: #d8cec7;
+            color: var(--dark);
+        }
+
+        /* Sabor Quick Chips */
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .flavor-chip {
+            background: #f7f3ef;
+            border: 1.5px solid #e7dfd8;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #5c473b;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.3, 1.2, 0.4, 1);
+            user-select: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .flavor-chip:hover {
+            background: #fff;
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 94, 0, 0.15);
+        }
+
+        .flavor-chip.active {
+            background: linear-gradient(135deg, var(--primary), var(--amber));
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(255, 94, 0, 0.35);
+            transform: scale(1.03);
+        }
+
+        /* Pastel Sizes */
+        .sizes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .size-card {
+            background: #fff;
+            border: 2px solid #e7ded8;
+            border-radius: 14px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .size-card:hover {
+            border-color: var(--amber);
+            transform: translateY(-2px);
+        }
+
+        .size-card.active {
+            border-color: var(--primary);
+            background: #fffaf5;
+            box-shadow: 0 4px 16px rgba(255, 94, 0, 0.18);
+        }
+
+        .size-card .size-emoji {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .size-card .size-name {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--dark);
+        }
+
+        .size-card .size-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .size-card .size-price {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-top: 4px;
+        }
+
+        /* Extras Toggle Options */
+        .extras-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .extra-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+            border: 1.5px solid #e7ded8;
+            padding: 10px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--dark);
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .extra-pill:hover {
+            border-color: var(--amber);
+        }
+
+        .extra-pill input {
+            display: none;
+        }
+
+        .extra-pill.checked {
+            background: #fff4ec;
+            border-color: var(--primary);
+            color: var(--primary-hover);
+        }
+
+        .extra-pill .check-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 6px;
+            border: 2px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: transparent;
+            transition: all 0.2s ease;
+        }
+
+        .extra-pill.checked .check-icon {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        /* Bottom Order Summary & CTA */
+        .order-summary-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            background: #fdf6f0;
+            border: 1.5px dashed #f0cbaf;
+            border-radius: 16px;
+            margin-top: 4px;
+        }
+
+        .total-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .total-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary);
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        /* Action Buttons */
+        .btn-fry {
+            width: 100%;
+            padding: 18px 24px;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #ff8c00 0%, #ff5e00 50%, #ff2d55 100%);
+            background-size: 200% auto;
+            color: white;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 94, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.35);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-fry:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 16px 35px rgba(255, 45, 85, 0.45);
+            background-position: right center;
+        }
+
+        .btn-fry:active {
+            transform: translateY(-1px) scale(0.99);
+        }
+
+        .btn-fry .shimmer {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                60deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.25) 50%,
+                transparent 70%
+            );
+            transform: rotate(30deg);
+            animation: btnShimmer 3.5s infinite;
+        }
+
+        @keyframes btnShimmer {
+            0% { transform: translate(-100%, -100%) rotate(30deg); }
+            100% { transform: translate(100%, 100%) rotate(30deg); }
+        }
+
+        /* ------------------------------------------------------------- */
+        /* STAGE 2: COOKING / PROGRESS BAR SECTION                        */
+        /* ------------------------------------------------------------- */
+        .cooking-stage {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Frying Pan Graphic */
+        .frying-pan-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            background: radial-gradient(circle at 50% 60%, #ff9e00, #e85d04 40%, #9d0208 85%);
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 10px 25px rgba(255, 94, 0, 0.3);
+            margin-bottom: 24px;
+        }
+
+        /* Hot oil sizzling surface */
+        .oil-waves {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 230, 100, 0.4) 10%, transparent 60%);
+            filter: blur(4px);
+            animation: sizzleWave 0.8s infinite alternate;
+        }
+
+        @keyframes sizzleWave {
+            0% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+            100% { transform: scale(1.1) rotate(3deg); opacity: 0.9; }
+        }
+
+        /* Frying Pastel Object */
+        .frying-pastel {
+            position: relative;
+            z-index: 5;
+            font-size: 72px;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.4));
+            animation: pastelFryAnim 0.7s infinite alternate ease-in-out;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes pastelFryAnim {
+            0% { transform: translateY(5px) rotate(-4deg) scale(0.95); }
+            100% { transform: translateY(-8px) rotate(5deg) scale(1.05); }
+        }
+
+        /* Steam particles */
+        .steam-wrap {
+            position: absolute;
+            top: 20px;
+            display: flex;
+            gap: 16px;
+            font-size: 24px;
+            opacity: 0.8;
+            animation: steamRise 1.2s infinite ease-out;
+        }
+
+        @keyframes steamRise {
+            0% { transform: translateY(10px) scale(0.7); opacity: 0; }
+            50% { opacity: 0.9; }
+            100% { transform: translateY(-35px) scale(1.3); opacity: 0; }
+        }
+
+        /* Cooking Stage Badges & Texts */
+        .cooking-header {
+            margin-bottom: 18px;
+        }
+
+        .cooking-flavor-name {
+            font-family: 'Fredoka', cursive;
+            font-size: 26px;
+            color: var(--primary);
+        }
+
+        .cooking-status-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #5c473b;
+            min-height: 24px;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* PROGRESS BAR STYLING */
+        .progress-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid #f0e6df;
+            margin-bottom: 20px;
+        }
+
+        .progress-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .progress-step-indicator {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-percent {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary);
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .progress-bar-track {
+            width: 100%;
+            height: 22px;
+            background: #ede4dc;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 30px;
             background: linear-gradient(
                 90deg,
-                #ff8c00,
-                #ff2d55
+                #ffb703 0%,
+                #ff8c00 40%,
+                #ff2d55 100%
             );
+            background-size: 30px 30px;
+            background-image: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.3) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0.3) 75%,
+                transparent 75%,
+                transparent
+            );
+            animation: progressStripes 0.8s linear infinite;
+            transition: width 0.15s ease-out;
+            box-shadow: 0 0 15px rgba(255, 94, 0, 0.6);
+        }
 
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
+        @keyframes progressStripes {
+            0% { background-position: 0 0; }
+            100% { background-position: 30px 0; }
+        }
 
+        /* Step Bubbles */
+        .step-dots {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 14px;
+            position: relative;
+        }
+
+        .step-dot-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #a89a91;
+            gap: 4px;
+            z-index: 2;
+        }
+
+        .step-dot-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #e8ded7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .step-dot-item.active .step-dot-circle {
+            background: var(--primary);
+            box-shadow: 0 0 10px rgba(255, 94, 0, 0.6);
+            transform: scale(1.15);
+        }
+
+        .step-dot-item.done .step-dot-circle {
+            background: var(--success);
+        }
+
+        /* Turbo Fry Button */
+        .turbo-btn {
+            background: #fff0e6;
+            border: 2px solid #ffd8c0;
+            padding: 12px 20px;
+            border-radius: 14px;
+            font-family: 'Fredoka', cursive;
+            font-size: 16px;
+            color: var(--primary);
             cursor: pointer;
-
-            transition: 0.25s;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
         }
 
-        button:hover {
-            transform: translateY(-3px);
-
-            box-shadow:
-                0 8px 20px rgba(255, 45, 85, 0.35);
+        .turbo-btn:hover {
+            background: #ffe3d1;
+            transform: scale(1.04);
         }
 
-        button:active {
-            transform: translateY(0);
+        .turbo-btn:active {
+            transform: scale(0.95);
         }
 
-        @keyframes aparecer {
-            from {
+        /* ------------------------------------------------------------- */
+        /* STAGE 3: RESULT / COMPLETED SECTION                           */
+        /* ------------------------------------------------------------- */
+        .ready-stage {
+            display: none;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.85); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .ready-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #e6f9f0;
+            color: #0d8a5f;
+            border: 1.5px solid #a3e9cb;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .ready-title {
+            font-family: 'Fredoka', cursive;
+            font-size: 34px;
+            color: var(--primary);
+            line-height: 1.2;
+            margin-bottom: 18px;
+        }
+
+        /* Interactive Pastel with Bite Feature */
+        .interactive-pastel-card {
+            background: linear-gradient(135deg, #fff9f0 0%, #fff 100%);
+            border: 2.5px dashed #ffd166;
+            border-radius: 24px;
+            padding: 24px;
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 10px 25px rgba(255, 183, 3, 0.15);
+            margin-bottom: 20px;
+        }
+
+        .interactive-pastel-card:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(255, 183, 3, 0.25);
+        }
+
+        .interactive-pastel-card:active {
+            transform: scale(0.97);
+        }
+
+        .bite-instruction {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .giant-pastel-emoji {
+            font-size: 84px;
+            display: inline-block;
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .bite-counter-pill {
+            position: absolute;
+            bottom: 12px;
+            right: 16px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Receipt / Comprovante */
+        .receipt-box {
+            background: #fff;
+            border: 1px solid #e7ded8;
+            border-radius: 16px;
+            padding: 16px 20px;
+            text-align: left;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            padding: 6px 0;
+            border-bottom: 1px dashed #f0e6df;
+        }
+
+        .receipt-row:last-child {
+            border-bottom: none;
+            padding-top: 10px;
+            font-weight: 800;
+            font-size: 16px;
+            color: var(--primary);
+        }
+
+        .receipt-label {
+            color: var(--text-muted);
+        }
+
+        .receipt-val {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Action buttons grid */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            padding: 14px 16px;
+            border: 2px solid #e7ded8;
+            background: #fff;
+            border-radius: 14px;
+            font-family: 'Fredoka', cursive;
+            font-size: 16px;
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: #fff8f5;
+        }
+
+        .btn-new-order {
+            grid-column: span 2;
+            padding: 16px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 16px;
+            font-family: 'Fredoka', cursive;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 94, 0, 0.3);
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-new-order:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(255, 45, 85, 0.4);
+        }
+
+        /* Recent Orders Section */
+        .recent-section {
+            margin-top: 24px;
+            padding-top: 18px;
+            border-top: 1.5px solid #f0e6df;
+            text-align: left;
+        }
+
+        .recent-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .recent-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            list-style: none;
+        }
+
+        .recent-tag {
+            background: #f5eee8;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6d5b50;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .recent-tag:hover {
+            background: #ffede0;
+            color: var(--primary);
+        }
+
+        /* Floating crumbs when biting */
+        .crumb {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ffd166;
+            border-radius: 3px;
+            pointer-events: none;
+            animation: crumbFly 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            z-index: 100;
+        }
+
+        @keyframes crumbFly {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            100% {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translate(var(--tx), var(--ty)) scale(0.2) rotate(var(--rot));
+            }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px 18px;
+                border-radius: 22px;
             }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            .main-title {
+                font-size: 30px;
+            }
+
+            .sizes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .extras-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-new-order {
+                grid-column: span 1;
             }
         }
     </style>
@@ -137,28 +1050,794 @@
 
 <body>
 
-<div class="container">
+    <!-- Dynamic Animated Oil & Steam Bubbles Background -->
+    <div class="bubbles-container" id="bubblesContainer"></div>
 
-    <h1>
-        Pastel de
-        <span th:text="${nome}">Gala</span>
-    </h1>
+    <div class="app-wrapper">
 
-    <form action="/" method="get">
+        <!-- Top Header Status Bar -->
+        <div class="top-nav">
+            <div class="badge-brand">
+                <span class="pulse-dot"></span>
+                <span>Pastelaria 100% Crocante</span>
+            </div>
+            <button class="sound-toggle" id="soundToggle" onclick="toggleAudio()" title="Ativar/Desativar Som">
+                <span id="soundIcon">🔊</span>
+                <span id="soundLabel">Som: ON</span>
+            </button>
+        </div>
 
-        <input
-                type="text"
-                name="nome"
-                placeholder="Digite o sabor do pastel..."
-        >
+        <!-- Main Interactive Card -->
+        <div class="container" id="mainContainer">
 
-        <button type="submit">
-            🥟 Fazer o pastel
-        </button>
+            <!-- ======================================================== -->
+            <!-- STAGE 1: ORDER CUSTOMIZER & FORM                         -->
+            <!-- ======================================================== -->
+            <div id="orderStage" class="stage-section">
 
-    </form>
+                <div class="title-wrapper">
+                    <h1 class="main-title">
+                        Pastel de
+                        <span class="highlight" id="titleFlavorDisplay" th:text="${nome != null and !nome.empty ? nome : 'Gala'}">Gala</span>
+                    </h1>
+                    <p class="subtitle">Monte seu pastel personalizado frito na hora com massa crocante!</p>
+                </div>
 
-</div>
+                <form id="pastelForm" action="/" method="get" onsubmit="event.preventDefault(); startCooking();">
+
+                    <div class="form-section">
+
+                        <!-- Input do Sabor -->
+                        <div class="input-group">
+                            <label class="input-label" for="flavorInput">
+                                <span>Qual é o sabor?</span>
+                                <span style="font-size: 11px; color: var(--primary); font-weight: normal;">*Digite ou clique abaixo</span>
+                            </label>
+                            <div class="input-box-wrapper">
+                                <span class="input-icon">🥟</span>
+                                <input
+                                    type="text"
+                                    id="flavorInput"
+                                    name="nome"
+                                    class="styled-input"
+                                    placeholder="Ex: Queijo, Carne Seca, Pizza..."
+                                    th:value="${nome}"
+                                    autocomplete="off"
+                                    required
+                                    oninput="handleFlavorInput(this.value)"
+                                >
+                                <button type="button" class="clear-btn" id="clearBtn" onclick="clearInput()" title="Limpar">✕</button>
+                            </div>
+
+                            <!-- Sugestões Rápidas de Sabores -->
+                            <div class="chips-container" id="flavorChips">
+                                <div class="flavor-chip" onclick="selectFlavor('Carne Seca c/ Queijo', this)">🥩 Carne Seca c/ Queijo</div>
+                                <div class="flavor-chip" onclick="selectFlavor('Frango c/ Catupiry', this)">🍗 Frango c/ Catupiry</div>
+                                <div class="flavor-chip" onclick="selectFlavor('Pizza Especial', this)">🍕 Pizza Especial</div>
+                                <div class="flavor-chip" onclick="selectFlavor('4 Queijos', this)">🧀 4 Queijos</div>
+                                <div class="flavor-chip" onclick="selectFlavor('Nutella c/ Morango', this)">🍫 Nutella c/ Morango</div>
+                                <div class="flavor-chip" onclick="selectFlavor('Pastel de Vento Raiz', this)">💨 De Vento</div>
+                                <div class="flavor-chip" onclick="pickRandomFlavor()">🎲 Surpresa do Chef</div>
+                            </div>
+                        </div>
+
+                        <!-- Tamanho do Pastel -->
+                        <div class="input-group">
+                            <label class="input-label">Tamanho do Pastel</label>
+                            <div class="sizes-grid">
+                                <div class="size-card active" data-size="Tradicional" data-price="12" onclick="selectSize(this)">
+                                    <div class="size-emoji">🥟</div>
+                                    <div class="size-name">Tradicional</div>
+                                    <div class="size-desc">20cm • O clássico</div>
+                                    <div class="size-price">R$ 12,00</div>
+                                </div>
+                                <div class="size-card" data-size="De Feira" data-price="18" onclick="selectSize(this)">
+                                    <div class="size-emoji">🥟✨</div>
+                                    <div class="size-name">De Feira</div>
+                                    <div class="size-desc">30cm • Caprichado</div>
+                                    <div class="size-price">R$ 18,00</div>
+                                </div>
+                                <div class="size-card" data-size="Monstro da Casa" data-price="28" onclick="selectSize(this)">
+                                    <div class="size-emoji">🏆🥟</div>
+                                    <div class="size-name">Monstro</div>
+                                    <div class="size-desc">50cm • Gigante</div>
+                                    <div class="size-price">R$ 28,00</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Adicionais e Acompanhamentos -->
+                        <div class="input-group">
+                            <label class="input-label">Acompanhamentos & Adicionais</label>
+                            <div class="extras-grid">
+                                <label class="extra-pill" onclick="toggleExtra(this, 4)">
+                                    <div class="check-icon">✓</div>
+                                    <span>🧀 Dobro de Queijo (+R$ 4)</span>
+                                </label>
+                                <label class="extra-pill" onclick="toggleExtra(this, 0)">
+                                    <div class="check-icon">✓</div>
+                                    <span>🌶️ Pimenta da Casa (Grátis)</span>
+                                </label>
+                                <label class="extra-pill" onclick="toggleExtra(this, 2)">
+                                    <div class="check-icon">✓</div>
+                                    <span>🥗 Vinagrete (+R$ 2)</span>
+                                </label>
+                                <label class="extra-pill" onclick="toggleExtra(this, 7)">
+                                    <div class="check-icon">✓</div>
+                                    <span>🥤 Caldo de Cana (+R$ 7)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Resumo do Preço -->
+                        <div class="order-summary-bar">
+                            <div class="total-label">Total do Pedido:</div>
+                            <div class="total-value" id="orderTotalPrice">R$ 12,00</div>
+                        </div>
+
+                        <!-- Botão Principal de Fritar -->
+                        <button type="submit" class="btn-fry" id="fryButton">
+                            <span class="shimmer"></span>
+                            <span>🔥 Fritar Pastel Agora!</span>
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- STAGE 2: ANIMATED FRYING / PROGRESS BAR                  -->
+            <!-- ======================================================== -->
+            <div id="cookingStage" class="cooking-stage">
+
+                <div class="cooking-header">
+                    <div class="badge-brand" style="background: rgba(255, 94, 0, 0.15); color: var(--primary); border-color: rgba(255, 94, 0, 0.3);">
+                        <span class="pulse-dot" style="background: #ff5e00; box-shadow: 0 0 8px #ff5e00;"></span>
+                        <span>Fritando no Tacho</span>
+                    </div>
+                    <h2 class="cooking-flavor-name" id="cookingFlavorTitle">Pastel de Gala</h2>
+                    <p class="cooking-status-text" id="cookingStatusText">
+                        <span>🥖</span> Abrindo a massa fresca no rolo...
+                    </p>
+                </div>
+
+                <!-- Tacho de Óleo Animado -->
+                <div class="frying-pan-container">
+                    <div class="oil-waves"></div>
+                    <div class="steam-wrap">
+                        <span>♨️</span>
+                        <span>♨️</span>
+                        <span>♨️</span>
+                    </div>
+                    <div class="frying-pastel" id="fryingPastelGraphic">🥟</div>
+                </div>
+
+                <!-- Barra de Progresso Interativa -->
+                <div class="progress-section">
+                    <div class="progress-meta">
+                        <span class="progress-step-indicator" id="stepIndicator">Etapa 1 de 5</span>
+                        <span class="progress-percent" id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" id="progressBarFill"></div>
+                    </div>
+                    <div class="step-dots">
+                        <div class="step-dot-item active" id="dot1">
+                            <div class="step-dot-circle">1</div>
+                            <span>Massa</span>
+                        </div>
+                        <div class="step-dot-item" id="dot2">
+                            <div class="step-dot-circle">2</div>
+                            <span>Recheio</span>
+                        </div>
+                        <div class="step-dot-item" id="dot3">
+                            <div class="step-dot-circle">3</div>
+                            <span>Fechar</span>
+                        </div>
+                        <div class="step-dot-item" id="dot4">
+                            <div class="step-dot-circle">4</div>
+                            <span>Fritar</span>
+                        </div>
+                        <div class="step-dot-item" id="dot5">
+                            <div class="step-dot-circle">5</div>
+                            <span>Pronto</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botão de Acelerar / Soprar -->
+                <button type="button" class="turbo-btn" onclick="turboSpeed()">
+                    <span>⚡ Acelerar Fritura (Turbo)</span>
+                </button>
+
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- STAGE 3: COMPLETED PASTEL & BITE INTERACTION             -->
+            <!-- ======================================================== -->
+            <div id="readyStage" class="ready-stage">
+
+                <div class="ready-badge">
+                    <span>✨</span> Frito com Perfeição & Crocância!
+                </div>
+
+                <h2 class="ready-title" id="readyPastelTitle">Pastel de Gala</h2>
+
+                <!-- Pastel Interativo com Mecânica de Mordidas -->
+                <div class="interactive-pastel-card" id="pastelBiteCard" onclick="takeBite(event)" title="Clique para dar uma mordida crocante!">
+                    <div class="bite-instruction">
+                        <span>🤤</span> Clique no pastel para dar uma mordida!
+                    </div>
+                    <div class="giant-pastel-emoji" id="pastelEmojiDisplay">🥟</div>
+                    <div class="bite-counter-pill" id="biteCounter">4 mordidas restantes</div>
+                </div>
+
+                <!-- Recibo / Comprovante do Pedido -->
+                <div class="receipt-box">
+                    <div class="receipt-row">
+                        <span class="receipt-label">Sabor:</span>
+                        <span class="receipt-val" id="receiptFlavor">Carne</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Tamanho:</span>
+                        <span class="receipt-val" id="receiptSize">De Feira (30cm)</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Adicionais:</span>
+                        <span class="receipt-val" id="receiptExtras">Nenhum</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Crocância:</span>
+                        <span class="receipt-val" style="color: var(--success);">100% Máxima ⭐</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Total Pago:</span>
+                        <span class="receipt-val" id="receiptTotal">R$ 12,00</span>
+                    </div>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div class="actions-grid">
+                    <button type="button" class="btn-secondary" onclick="shareOrder()">
+                        <span>📋</span> Copiar Pedido
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="ratePastel()">
+                        <span>⭐</span> Avaliar (5/5)
+                    </button>
+                    <button type="button" class="btn-new-order" onclick="resetOrder()">
+                        <span>🥟</span> Fazer Outro Pastel
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Histórico de Pastéis Recentes -->
+            <div class="recent-section" id="recentSection">
+                <div class="recent-title">
+                    <span>Histórico de Pastéis Pedidos</span>
+                    <span id="recentCount" style="color: var(--primary);">0 pedidos</span>
+                </div>
+                <ul class="recent-list" id="recentList">
+                    <li class="recent-tag" onclick="selectFlavor('Carne Seca c/ Queijo')">Carne Seca c/ Queijo</li>
+                    <li class="recent-tag" onclick="selectFlavor('Frango c/ Catupiry')">Frango c/ Catupiry</li>
+                    <li class="recent-tag" onclick="selectFlavor('Nutella c/ Morango')">Nutella c/ Morango</li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Web Audio & Interactivity Script -->
+    <script>
+        // ==========================================
+        // STATE MANAGEMENT
+        // ==========================================
+        let currentSize = "Tradicional";
+        let sizePrice = 12;
+        let extrasTotal = 0;
+        let selectedExtrasList = [];
+        let isAudioEnabled = true;
+        let audioCtx = null;
+        let cookingInterval = null;
+        let cookingSpeed = 1;
+        let bitesLeft = 4;
+
+        const pastelBiteEmojis = ["🥟", "🥟", "🤤", "😋", "✨"];
+        const surpriseFlavors = [
+            "Carne com Ouro 24k",
+            "Costela com Barbecue & Cheddar",
+            "Romeu e Julieta Supremo",
+            "Bacalhau com Queijo Minas",
+            "Camarão com Cream Cheese",
+            "Doce de Leite com Canela",
+            "Strogonoff de Carne Cremoso",
+            "Calabresa Moída com Catupiry"
+        ];
+
+        // Cooking steps definition
+        const cookingSteps = [
+            { min: 0, max: 20, text: "🥖 Abrindo a massa fresca no rolo...", dot: 1, step: "Etapa 1 de 5", emoji: "🫓" },
+            { min: 20, max: 45, text: "🧀 Recheando com muito capricho...", dot: 2, step: "Etapa 2 de 5", emoji: "🥟" },
+            { min: 45, max: 70, text: "🍴 Fechando as bordas com o garfo...", dot: 3, step: "Etapa 3 de 5", emoji: "🍴" },
+            { min: 70, max: 95, text: "♨️ Fritando no tacho de óleo fervendo...", dot: 4, step: "Etapa 4 de 5", emoji: "🔥" },
+            { min: 95, max: 100, text: "✨ Escorrendo e conferindo a crocância...", dot: 5, step: "Etapa 5 de 5", emoji: "🥟" }
+        ];
+
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            initBubbles();
+            loadRecentOrders();
+
+            const input = document.getElementById('flavorInput');
+            if (input.value.trim() !== '') {
+                handleFlavorInput(input.value);
+            }
+        });
+
+        // Background floating bubbles generator
+        function initBubbles() {
+            const container = document.getElementById('bubblesContainer');
+            const bubbleCount = 18;
+
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                const size = Math.random() * 35 + 15;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.left = `${Math.random() * 100}vw`;
+                bubble.style.animationDuration = `${Math.random() * 8 + 6}s`;
+                bubble.style.animationDelay = `${Math.random() * 5}s`;
+                container.appendChild(bubble);
+            }
+        }
+
+        // ==========================================
+        // WEB AUDIO SYNTHESIZER (100% OFFLINE / ZERO DEPENDENCIES)
+        // ==========================================
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playTone(freq, type = 'sine', duration = 0.15, vol = 0.15) {
+            if (!isAudioEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(vol, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function playCrunchSound() {
+            if (!isAudioEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const bufferSize = ctx.sampleRate * 0.1;
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+
+                const noise = ctx.createBufferSource();
+                noise.buffer = buffer;
+
+                const filter = ctx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.value = 1800;
+
+                const gain = ctx.createGain();
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(ctx.destination);
+
+                noise.start();
+            } catch (e) {}
+        }
+
+        function playSuccessChime() {
+            if (!isAudioEnabled) return;
+            playTone(523.25, 'triangle', 0.2, 0.2); // C5
+            setTimeout(() => playTone(659.25, 'triangle', 0.2, 0.2), 120); // E5
+            setTimeout(() => playTone(783.99, 'triangle', 0.2, 0.2), 240); // G5
+            setTimeout(() => playTone(1046.50, 'sine', 0.4, 0.25), 360); // C6
+        }
+
+        function toggleAudio() {
+            isAudioEnabled = !isAudioEnabled;
+            const icon = document.getElementById('soundIcon');
+            const label = document.getElementById('soundLabel');
+            if (isAudioEnabled) {
+                icon.textContent = '🔊';
+                label.textContent = 'Som: ON';
+                playTone(600, 'sine', 0.1, 0.1);
+            } else {
+                icon.textContent = '🔇';
+                label.textContent = 'Som: OFF';
+            }
+        }
+
+        // ==========================================
+        // UI & FORM INTERACTIONS
+        // ==========================================
+        function handleFlavorInput(val) {
+            const titleDisplay = document.getElementById('titleFlavorDisplay');
+            const clearBtn = document.getElementById('clearBtn');
+            const cleanVal = val.trim();
+
+            if (cleanVal.length > 0) {
+                titleDisplay.textContent = cleanVal;
+                clearBtn.style.display = 'flex';
+            } else {
+                titleDisplay.textContent = 'Gala';
+                clearBtn.style.display = 'none';
+            }
+
+            // Update active state on flavor chips
+            const chips = document.querySelectorAll('.flavor-chip');
+            chips.forEach(chip => {
+                if (chip.textContent.toLowerCase().includes(cleanVal.toLowerCase()) && cleanVal.length > 0) {
+                    chip.classList.add('active');
+                } else {
+                    chip.classList.remove('active');
+                }
+            });
+        }
+
+        function clearInput() {
+            const input = document.getElementById('flavorInput');
+            input.value = '';
+            handleFlavorInput('');
+            input.focus();
+            playTone(350, 'sine', 0.08, 0.1);
+        }
+
+        function selectFlavor(flavorName, chipElement = null) {
+            const input = document.getElementById('flavorInput');
+            input.value = flavorName;
+            handleFlavorInput(flavorName);
+            playTone(550, 'sine', 0.1, 0.15);
+
+            if (chipElement) {
+                document.querySelectorAll('.flavor-chip').forEach(c => c.classList.remove('active'));
+                chipElement.classList.add('active');
+            }
+        }
+
+        function pickRandomFlavor() {
+            const randomIndex = Math.floor(Math.random() * surpriseFlavors.length);
+            const chosen = surpriseFlavors[randomIndex];
+            selectFlavor(chosen);
+            playTone(700, 'triangle', 0.15, 0.2);
+        }
+
+        function selectSize(card) {
+            document.querySelectorAll('.size-card').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            currentSize = card.dataset.size;
+            sizePrice = parseFloat(card.dataset.price);
+            updateTotal();
+            playTone(480, 'sine', 0.08, 0.12);
+        }
+
+        function toggleExtra(label, price) {
+            label.classList.toggle('checked');
+            const isChecked = label.classList.contains('checked');
+            const extraName = label.querySelector('span').textContent;
+
+            if (isChecked) {
+                extrasTotal += price;
+                selectedExtrasList.push(extraName);
+                playTone(650, 'sine', 0.08, 0.15);
+            } else {
+                extrasTotal -= price;
+                selectedExtrasList = selectedExtrasList.filter(item => item !== extraName);
+                playTone(400, 'sine', 0.08, 0.12);
+            }
+            updateTotal();
+        }
+
+        function updateTotal() {
+            const total = sizePrice + extrasTotal;
+            const display = document.getElementById('orderTotalPrice');
+            display.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
+        // ==========================================
+        // PROGRESS BAR & COOKING SIMULATION
+        // ==========================================
+        function startCooking() {
+            const flavor = document.getElementById('flavorInput').value.trim() || 'Gala';
+
+            // Switch views
+            document.getElementById('orderStage').style.display = 'none';
+            document.getElementById('cookingStage').style.display = 'block';
+            document.getElementById('readyStage').style.display = 'none';
+
+            // Set info
+            document.getElementById('cookingFlavorTitle').textContent = `Pastel de ${flavor}`;
+            document.getElementById('progressBarFill').style.width = '0%';
+            document.getElementById('progressPercent').textContent = '0%';
+
+            cookingSpeed = 1;
+            let progress = 0;
+
+            // Audio sound effect
+            playTone(440, 'triangle', 0.2, 0.2);
+
+            if (cookingInterval) clearInterval(cookingInterval);
+
+            cookingInterval = setInterval(() => {
+                progress += (Math.random() * 2.2 + 1.2) * cookingSpeed;
+
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(cookingInterval);
+                    updateCookingProgress(progress, flavor);
+                    setTimeout(() => finishCooking(flavor), 500);
+                } else {
+                    updateCookingProgress(progress, flavor);
+                }
+            }, 80);
+        }
+
+        function turboSpeed() {
+            cookingSpeed = 3.5;
+            playTone(880, 'sawtooth', 0.1, 0.15);
+            const pastel = document.getElementById('fryingPastelGraphic');
+            pastel.style.transform = 'scale(1.25) rotate(15deg)';
+            setTimeout(() => {
+                pastel.style.transform = '';
+            }, 300);
+        }
+
+        function updateCookingProgress(pct, flavor) {
+            const rounded = Math.min(100, Math.floor(pct));
+            document.getElementById('progressBarFill').style.width = `${rounded}%`;
+            document.getElementById('progressPercent').textContent = `${rounded}%`;
+
+            // Find current step
+            const currentStep = cookingSteps.find(s => rounded >= s.min && rounded <= s.max) || cookingSteps[cookingSteps.length - 1];
+
+            document.getElementById('stepIndicator').textContent = currentStep.step;
+            document.getElementById('cookingStatusText').innerHTML = `<span>${currentStep.emoji}</span> ${currentStep.text.replace('[Sabor]', flavor)}`;
+
+            // Update dots
+            for (let i = 1; i <= 5; i++) {
+                const dot = document.getElementById(`dot${i}`);
+                if (i < currentStep.dot) {
+                    dot.className = 'step-dot-item done';
+                } else if (i === currentStep.dot) {
+                    dot.className = 'step-dot-item active';
+                } else {
+                    dot.className = 'step-dot-item';
+                }
+            }
+
+            // Sizzle audio tick occasionally
+            if (rounded % 15 === 0) {
+                playCrunchSound();
+            }
+        }
+
+        function finishCooking(flavor) {
+            playSuccessChime();
+
+            // Save order to history
+            saveOrderToHistory(flavor);
+
+            // Switch to ready stage
+            document.getElementById('cookingStage').style.display = 'none';
+            document.getElementById('readyStage').style.display = 'block';
+
+            // Populate receipt
+            document.getElementById('readyPastelTitle').textContent = `Pastel de ${flavor}`;
+            document.getElementById('receiptFlavor').textContent = flavor;
+            document.getElementById('receiptSize').textContent = `${currentSize} (${currentSize === 'Tradicional' ? '20cm' : currentSize === 'De Feira' ? '30cm' : '50cm'})`;
+            document.getElementById('receiptExtras').textContent = selectedExtrasList.length > 0 ? selectedExtrasList.join(', ') : 'Nenhum';
+            const total = sizePrice + extrasTotal;
+            document.getElementById('receiptTotal').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+
+            // Reset bite mechanic
+            bitesLeft = 4;
+            document.getElementById('pastelEmojiDisplay').textContent = "🥟";
+            document.getElementById('biteCounter').textContent = `4 mordidas restantes`;
+
+            // Spawn celebration particles
+            spawnCelebrationConfetti();
+        }
+
+        // ==========================================
+        // INTERACTIVE BITE MECHANIC & CRUMBS
+        // ==========================================
+        function takeBite(e) {
+            if (bitesLeft <= 0) {
+                playTone(300, 'sine', 0.1, 0.1);
+                return;
+            }
+
+            bitesLeft--;
+            playCrunchSound();
+
+            const emojiDisplay = document.getElementById('pastelEmojiDisplay');
+            const counter = document.getElementById('biteCounter');
+            const card = document.getElementById('pastelBiteCard');
+
+            // Spawn crumbs
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX ? (e.clientX - rect.left) : (rect.width / 2);
+            const y = e.clientY ? (e.clientY - rect.top) : (rect.height / 2);
+            createCrumbs(x, y, card);
+
+            // Animate bite
+            emojiDisplay.style.transform = 'scale(0.8) rotate(-10deg)';
+            setTimeout(() => {
+                emojiDisplay.style.transform = 'scale(1) rotate(0deg)';
+            }, 120);
+
+            if (bitesLeft === 3) {
+                counter.textContent = `3 mordidas restantes 😋`;
+            } else if (bitesLeft === 2) {
+                counter.textContent = `Metade já foi! Crocante demais 🤤`;
+            } else if (bitesLeft === 1) {
+                counter.textContent = `Última mordida! 🥟`;
+            } else {
+                emojiDisplay.textContent = "✨😋✨";
+                counter.textContent = `Pastel todinho devorado! Parabéns!`;
+                playSuccessChime();
+            }
+        }
+
+        function createCrumbs(x, y, parent) {
+            for (let i = 0; i < 8; i++) {
+                const crumb = document.createElement('div');
+                crumb.classList.add('crumb');
+                crumb.style.left = `${x}px`;
+                crumb.style.top = `${y}px`;
+
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 60 + 20;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                const rot = Math.random() * 360;
+
+                crumb.style.setProperty('--tx', `${tx}px`);
+                crumb.style.setProperty('--ty', `${ty}px`);
+                crumb.style.setProperty('--rot', `${rot}deg`);
+
+                parent.appendChild(crumb);
+                setTimeout(() => crumb.remove(), 600);
+            }
+        }
+
+        function spawnCelebrationConfetti() {
+            const colors = ['#ff5e00', '#ffb703', '#ff2d55', '#10b981', '#ffffff'];
+            const container = document.body;
+
+            for (let i = 0; i < 35; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = `${Math.random() * 10 + 6}px`;
+                confetti.style.height = `${Math.random() * 10 + 6}px`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.top = '-20px';
+                confetti.style.borderRadius = '50%';
+                confetti.style.zIndex = '9999';
+                confetti.style.pointerEvents = 'none';
+
+                const duration = Math.random() * 2 + 1.5;
+                confetti.style.transition = `all ${duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+
+                container.appendChild(confetti);
+
+                setTimeout(() => {
+                    confetti.style.transform = `translateY(${window.innerHeight + 50}px) rotate(${Math.random() * 720}deg)`;
+                    confetti.style.opacity = '0';
+                }, 20);
+
+                setTimeout(() => confetti.remove(), (duration + 0.2) * 1000);
+            }
+        }
+
+        // ==========================================
+        // LOCAL STORAGE / RECENT ORDERS
+        // ==========================================
+        function saveOrderToHistory(flavor) {
+            try {
+                let history = JSON.parse(localStorage.getItem('pastel_history') || '[]');
+                if (!history.includes(flavor)) {
+                    history.unshift(flavor);
+                    if (history.length > 8) history.pop();
+                    localStorage.setItem('pastel_history', JSON.stringify(history));
+                    renderRecentList(history);
+                }
+            } catch (e) {}
+        }
+
+        function loadRecentOrders() {
+            try {
+                let history = JSON.parse(localStorage.getItem('pastel_history') || '[]');
+                if (history.length === 0) {
+                    history = ['Carne Seca c/ Queijo', 'Frango c/ Catupiry', 'Nutella c/ Morango'];
+                }
+                renderRecentList(history);
+            } catch (e) {}
+        }
+
+        function renderRecentList(list) {
+            const ul = document.getElementById('recentList');
+            const count = document.getElementById('recentCount');
+            ul.innerHTML = '';
+            count.textContent = `${list.length} pedidos`;
+
+            list.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'recent-tag';
+                li.textContent = item;
+                li.onclick = () => selectFlavor(item);
+                ul.appendChild(li);
+            });
+        }
+
+        // ==========================================
+        // SHARING & RESET
+        // ==========================================
+        function shareOrder() {
+            const flavor = document.getElementById('receiptFlavor').textContent;
+            const size = document.getElementById('receiptSize').textContent;
+            const total = document.getElementById('receiptTotal').textContent;
+            const text = `🥟 Meu Pedido no Pastel de Gala:\n- Pastel de ${flavor}\n- Tamanho: ${size}\n- Total: ${total}\n100% Crocante! 🔥`;
+
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('📋 Pedido copiado para a área de transferência!');
+                    playTone(800, 'sine', 0.1, 0.15);
+                });
+            } else {
+                alert(text);
+            }
+        }
+
+        function ratePastel() {
+            playSuccessChime();
+            alert('⭐⭐⭐⭐⭐\nObrigado por avaliar com 5 Estrelas!\nA Pastelaria de Gala agradece a preferência!');
+        }
+
+        function resetOrder() {
+            playTone(500, 'sine', 0.1, 0.1);
+            document.getElementById('readyStage').style.display = 'none';
+            document.getElementById('cookingStage').style.display = 'none';
+            document.getElementById('orderStage').style.display = 'block';
+            document.getElementById('flavorInput').focus();
+        }
+    </script>
 
 </body>
 
